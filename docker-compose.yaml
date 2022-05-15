@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+    lnd:
+        container_name: lnd
+        image: lightninglabs/lnd:v0.13.3-beta
+        volumes:
+            - ${PWD}/data/lnd:/root/.lnd
+        restart: always
+        ports:
+         - 9911:9911
+        networks:
+            net:
+              ipv4_address: '10.2.0.2'
+    tor:
+        container_name: tor
+        image: lncm/tor:0.4.5.7@sha256:a83e0d9fd1a35adf025f2f34237ec1810e2a59765988dce1dfb222ca8ef6583c
+        restart: always
+        user: toruser
+        ports:
+         - "9050"
+        volumes:
+         - ${PWD}/data/tor/torrc:/etc/tor/torrc:ro
+         - ${PWD}/data/tor/data:/var/lib/tor/
+         - ${PWD}/data/tor/run:/var/run/tor/
+        networks:
+          net:
+              ipv4_address: '10.2.0.3'
+
+networks: 
+    net:
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.2.0.0/16
